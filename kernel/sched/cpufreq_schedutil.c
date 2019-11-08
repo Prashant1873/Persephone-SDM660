@@ -21,6 +21,8 @@
 
 unsigned long boosted_cpu_util(int cpu);
 
+#define SUGOV_KTHREAD_PRIORITY	50
+
 /* Stub out fast switch routines present on mainline to reduce the backport
  * overhead. */
 #define cpufreq_driver_fast_switch(x, y) 0
@@ -221,6 +223,7 @@ static void sugov_get_util(unsigned long *util, unsigned long *max, u64 time)
 	if (likely(use_pelt()))
 		*util = *util + rt;
 
+	*util = boosted_cpu_util(cpu) + rt;
 	*util = min(*util, max_cap);
 	*max = max_cap;
 }
